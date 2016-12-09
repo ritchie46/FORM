@@ -1,22 +1,10 @@
 from sympy import symbols, pi, diff, pprint
-import math
-
-smbl = "f d s"
-
-f, d, s = symbols(smbl)
-
-# average values of the stochastic symbols
-average = [290, 30, 100e3]
-
-# standard deviation of the stochastic symbols
-sig = [25, 3, 0]
-
-smbl = smbl.split(sep=" ")
-
-z = pi * d**2 * f / 4 - s
+import scipy.stats as stats
+import numpy as np
+import matplotlib.pyplot as plt
 
 
-class Level2Prob:
+class IterForm:
     def __init__(self, z, _symbols, mean, std_dev):
         # Failure function
         self.z = z
@@ -55,6 +43,9 @@ class Level2Prob:
         # new mean value per iteration
         # mean i = mean - alpha_i * beta * std dev
         self.mean_i = [mean]
+
+        # total chance
+        self.chance = []
 
     def det_partial_dev(self):
         for variable in self.symbols:
@@ -107,6 +98,8 @@ class Level2Prob:
         """
         self.beta.append(self.mean_z_evalf[i] / self.std_dev_z_evalf[i])
 
+        self.chance.append(stats.norm.cdf(float(self.beta[i])))
+
         # determine alpha i and adapt mean values
         self.alpha_i.append([])
         self.mean_i.append([])
@@ -123,21 +116,30 @@ class Level2Prob:
             pprint(self.partial_dev[j])
 
         for i in range(len(self.mean_z)):
-            print("\n\nIteration %d.\n%s\n\nmean z-function:\n" % ((i + 1), "-" * line_small))
+            print("\n\n\n\nIteration %d.\n%s\n\nmean z-function:\n" % ((i + 1), "-" * line))
             pprint(self.mean_z[i])
 
-            print("\nMean variables\n%s\n" % ("-" * line), self.subs_mean[i])
+            print("\nMean variables\n%s\n" % ("-" * line_small), self.subs_mean[i])
             print("\nmean z-function value:", self.mean_z[i].subs(self.subs_mean[i]).evalf())
 
             print("\nstd dev z-function:\n")
             pprint(self.std_dev_z[i])
             print("\nstd dev z-function value:", self.std_dev_z[i].subs(self.subs_mean[i]).evalf())
 
-            print("\n\nBeta: %s" % self.beta[i])
-            print("\nalpha i: %s" % self.alpha_i[i])
+            print("\nSymbols: %s" % self.symbols)
+            print("\nαi: %s" % self.alpha_i[i])
+            print("\nβ: %s" % self.beta[i])
+            print("\nP(β): %s" % self.chance[i])
+            print("\nP(1 - β): %s" % (1 - self.chance[i]))
+
+    def plot(self):
+        mean = float(self.mean_z[-1].subs(self.subs_mean[-1]).evalf())
+        x = np.linspace(0, mean, 50)
+
+        plt.plot(x, stats.norm.pdf(x,
+                                   loc=mean,
+                                   scale=float(self.std_dev_z[-1].subs(self.subs_mean[-1]).evalf())))
+        plt.show()
 
 
-a = Level2Prob(z, smbl, average, sig)
-a.iterate(5)
-a.output()
 
