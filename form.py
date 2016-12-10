@@ -47,6 +47,10 @@ class IterForm:
         # total chance
         self.chance = []
 
+    @property
+    def P(self):
+        return self.beta[-1]
+
     def det_partial_dev(self):
         for variable in self.symbols:
             self.partial_dev.append(diff(self.z, variable))
