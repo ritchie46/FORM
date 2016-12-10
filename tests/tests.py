@@ -1,6 +1,7 @@
 import unittest
 import math
 from parser import Parser
+from sympy import symbols, pi
 from form import *
 
 
@@ -29,7 +30,7 @@ class FormTest(unittest.TestCase):
                             "Beta value is not correct.")
 
     def test_parser(self):
-        a = Parser("pi * d^2 * f / 4 - s * cot(x)")
+        a = Parser("pi * d² * f / 4 - s * cot(x)")
         self.assertEqual(str(a.f), "pi*d**2*f/4 - s*cot(x)", "_pythonify function")
         self.assertRegex(str(a.variables), r'[d]|[f]|[s]|[x]|[^a-zA-Z]', "_create_symbols function")
 

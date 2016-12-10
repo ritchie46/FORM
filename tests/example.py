@@ -1,4 +1,6 @@
 from form import *
+from sympy import symbols
+from sympy.core import pi
 
 smbl = "f d s"
 

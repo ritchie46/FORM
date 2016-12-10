@@ -1,4 +1,4 @@
-from sympy import symbols, pi, diff, pprint
+from sympy import diff, pprint
 import scipy.stats as stats
 import numpy as np
 import matplotlib.pyplot as plt
