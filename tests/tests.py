@@ -1,8 +1,10 @@
-import unittest
 import math
-from parser import Parser
+import unittest
+
 from sympy import symbols, pi
-from form import *
+
+from FORM.form import *
+from FORM.parser import Parser
 
 
 class FormTest(unittest.TestCase):

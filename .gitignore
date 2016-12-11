@@ -310,3 +310,8 @@ paket-files/
 /readme_vik.txt
 /laizen/secret.py
 /laizen/settings.py
+
+# python build files
+*.egg
+build/
+dist/

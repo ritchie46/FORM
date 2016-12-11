@@ -15,6 +15,8 @@ class Parser:
         self.s = []
         self._pythonify()
         self._create_symbols()
+        # expression string
+        self.fs = self.f
         # expression
         self.f = parse_expr(self.f)
 
