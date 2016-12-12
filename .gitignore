@@ -314,4 +314,5 @@ paket-files/
 # python build files
 *.egg
 build/
+FORM.egg-info/
 dist/

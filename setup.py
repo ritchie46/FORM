@@ -15,7 +15,6 @@ setup(
     packages=['FORM'],
     install_requires=[
         "sympy",
-        "numpy",
         "matplotlib",
         "scipy"
     ]

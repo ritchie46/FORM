@@ -14,7 +14,7 @@ class FormTest(unittest.TestCase):
         f, d, s = symbols(smbl)
 
         # average values of the stochastic symbols
-        average = [290, 30, 0]
+        average = [290, 30, 100e3]
 
         # standard deviation of the stochastic symbols
         sig = [25, 3, 0]
@@ -28,7 +28,7 @@ class FormTest(unittest.TestCase):
         a.iterate(4)
         for i in range(len(a.beta)):
             self.assertTrue(math.isclose(a.beta[i],
-                                         [4.59162043183260, 7.33192836812711, 8.73410698874749, 9.38389491801219][i]),
+                                         [2.35168452829880, 2.85290452651544, 2.87229325859207, 2.87221319115248][i]),
                             "Beta value is not correct.")
 
     def test_parser(self):

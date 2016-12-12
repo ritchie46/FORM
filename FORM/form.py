@@ -1,6 +1,5 @@
 from sympy import diff, pprint
 import scipy.stats as stats
-import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -35,6 +34,9 @@ class IterForm:
 
         # part_diff * std dev
         self.partial_dev__std_dev = []
+
+        # A predefined beta can be given to search for design values that coincide with the reliability index
+        self.predef_beta = None
 
         # beta: mean / std dev
         self.beta = []
@@ -90,7 +92,6 @@ class IterForm:
                 )
 
             self.std_dev_z[i] **= 0.5
-
             # floating point values
             self.mean_z_evalf.append(self.mean_z[i].subs(self.subs_mean[i]).evalf())
             self.std_dev_z_evalf.append(self.std_dev_z[i].subs(self.subs_mean[i]).evalf())
@@ -100,8 +101,11 @@ class IterForm:
         """
         The results of every iterations are determined to adapt the input for the next iteration.
         """
-        self.beta.append(self.mean_z_evalf[i] / self.std_dev_z_evalf[i])
-
+        if self.predef_beta is not None:
+            beta = self.predef_beta
+        else:
+            beta = self.mean_z_evalf[i] / self.std_dev_z_evalf[i]
+        self.beta.append(beta)
         self.chance.append(stats.norm.cdf(float(self.beta[i])))
 
         # determine alpha i and adapt mean values
@@ -109,40 +113,48 @@ class IterForm:
         self.mean_i.append([])
         for j in range(len(self.std_dev)):
             self.alpha_i[i].append(self.partial_dev__std_dev[i][j] / self.std_dev_z[i].subs(self.subs_mean[i]).evalf())
-            self.mean_i[i + 1].append(self.mean_i[0][j] - self.alpha_i[i][j] * self.beta[i] * self.std_dev[j])
+            self.mean_i[i + 1].append(self.mean_i[0][j] - self.alpha_i[i][j] * beta * self.std_dev[j])
 
     def output(self):
         line = 40
-        line_small = 20
         print("\n\nPartial derivatives:\n%s" % ("-" * line))
         for j in range(len(self.symbols)):
-            print("variable %s" % self.symbols[j])
+            print("Partial derivative to %s:" % self.symbols[j])
             pprint(self.partial_dev[j])
 
         for i in range(len(self.mean_z)):
-            print("\n\n\n\nIteration %d.\n%s\n\nmean z-function:\n" % ((i + 1), "-" * line))
+            self.output_by_index(i, verbose=True)
+
+    def output_by_index(self, i, verbose=False):
+        line = 40
+        if verbose:
+            print("\n\n\n\nIteration %d.\n%s\n\n"
+                  "Total reliability function results:\n"
+                  "\tMean z-function:\n" % ((i + 1), "-" * line))
             pprint(self.mean_z[i])
 
-            print("\nMean variables\n%s\n" % ("-" * line_small), self.subs_mean[i])
-            print("\nmean z-function value:", self.mean_z[i].subs(self.subs_mean[i]).evalf())
-
-            print("\nstd dev z-function:\n")
+            print("\n\tStd dev z-function:\n")
             pprint(self.std_dev_z[i])
-            print("\nstd dev z-function value:", self.std_dev_z[i].subs(self.subs_mean[i]).evalf())
-
-            print("\nSymbols: %s" % self.symbols)
-            print("\nαi: %s" % self.alpha_i[i])
-            print("\nβ: %s" % self.beta[i])
-            print("\nP(β): %s" % self.chance[i])
-            print("\nP(1 - β): %s" % (1 - self.chance[i]))
+            print("\n\tstd dev z-function floating point value:", self.std_dev_z[i].subs(self.subs_mean[i]).evalf())
+        print("\nResults:"
+              "\n\n\tDesign point location:\n\t", self.subs_mean[i])
+        print("\n\tMean z-function floating point value:", self.mean_z[i].subs(self.subs_mean[i]).evalf())
+        print("\n\tSymbols order of αi:\n\t %s" % self.symbols)
+        print("\n\tαi: %s" % self.alpha_i[i])
+        print("\n\tThe reliability index β: %s" % self.beta[i])
+        print("\n\tProbability of z >= 0:\n\t\tP(β): %s" % self.chance[i])
+        print("\n\tProbability of z <= 0:\n\t\tP(1 - β): %s" % (1 - self.chance[i]))
 
     def plot(self):
-        mean = float(self.mean_z[-1].subs(self.subs_mean[-1]).evalf())
-        x = np.linspace(0, mean, 50)
+        x = [0, 1]
+        dbeta = [0, self.beta[0]]
 
-        plt.plot(x, stats.norm.pdf(x,
-                                   loc=mean,
-                                   scale=float(self.std_dev_z[-1].subs(self.subs_mean[-1]).evalf())))
+        for i in range(1, len(self.beta)):
+            dbeta.append(self.beta[i] - self.beta[i - 1])
+            x.append(i + 1)
+        plt.ylim([0, float(max(self.beta) + 0.5)])
+        plt.plot(x, [0] + self.beta)
+        plt.plot(x, dbeta)
         plt.show()
 
 
