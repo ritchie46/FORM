@@ -1,6 +1,4 @@
 from sympy import symbols, sqrt
-from sympy.core import pi
-
 from FORM.form import *
 
 smbl = "x b s"
@@ -19,7 +17,7 @@ smbl = smbl.split(sep=" ")
 z = b - s + sqrt(x)
 
 a = IterForm(z, smbl, average, sig)
-a.iterate(4)
+a.iterate()
 a.output()
 
 a.plot()

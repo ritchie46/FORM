@@ -1,6 +1,7 @@
 from sympy import diff, pprint
 import scipy.stats as stats
 import matplotlib.pyplot as plt
+import math
 
 
 class IterForm:
@@ -57,8 +58,9 @@ class IterForm:
         for variable in self.symbols:
             self.partial_dev.append(diff(self.z, variable))
 
-    def iterate(self, n):
+    def iterate(self, n=20):
         self.det_partial_dev()
+
         for i in range(n):
             # append substitution dict.
             self.subs_mean.append({})
@@ -96,6 +98,9 @@ class IterForm:
             self.mean_z_evalf.append(self.mean_z[i].subs(self.subs_mean[i]).evalf())
             self.std_dev_z_evalf.append(self.std_dev_z[i].subs(self.subs_mean[i]).evalf())
             self._update_mean(i)
+
+            if i > 1 and math.isclose(self.beta[i], self.beta[i - 1]):
+                break
 
     def _update_mean(self, i):
         """

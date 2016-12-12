@@ -28,19 +28,18 @@ class CLI:
         print("\nChoose your option:\n"
               "[0] Show result summary of latest iteration.\n"
               "[1] Show output off all iterations.\n"
-              "[2] Change the amount of iterations (current = %d).\n"
-              "[3] Show αi.\n"
-              "[4] Change mean values.\n"
-              "[5] Change standard deviation values.\n"
-              "[6] Change the reliability function.\n"
-              "[7] Plot convergence.\n"
-              "[8] Preset reliability index β\n"
-              "[9] Quit." % self.n)
+              "[2] Show αi.\n"
+              "[3] Change mean values.\n"
+              "[4] Change standard deviation values.\n"
+              "[5] Change the reliability function.\n"
+              "[6] Plot convergence.\n"
+              "[7] Preset reliability index β\n"
+              "[8] Quit.")
         opt = int(input())
         if opt == 0:
             print("\nComputing solution ...\n\n")
             self.assign()
-            self._compute(self.n)
+            self._compute()
             self.sol.output_by_index(-1, False)
             self.result = True
             self.options()
@@ -48,15 +47,12 @@ class CLI:
         elif opt == 1:
             print("\nComputing solution ...\n\n")
             self.assign()
-            self._compute(self.n)
+            self._compute()
             self.sol.output()
             self.result = True
             self.options()
         elif opt == 2:
-            self.n = int(input("\nSet the amount of iterations: \n"))
-            self.options()
-        elif opt == 3:
-            print("The αi factor shows the influence of a variable on the failure probability."
+            print("The αi factor shows the influence of a variable on the failure probability.\n"
                   "The shown αi factor is the result after 1 iteration")
             print("\nComputing solution ...\n\n")
             self.assign()
@@ -64,26 +60,26 @@ class CLI:
             for i in range(len(self.sol.symbols)):
                 print("%s: %s" % (self.sol.symbols[i], self.sol.alpha_i[0][i]))
             self.options()
-        elif opt == 4:
+        elif opt == 3:
             self.mean_new()
             self.options()
-        elif opt == 5:
+        elif opt == 4:
             self.std_dev_new()
             self.options()
-        elif opt == 6:
+        elif opt == 5:
             self.z_new()
             self.options()
-        elif opt == 7:
+        elif opt == 6:
             if self.result:
                 self.sol.plot()
             else:
                 print("There is no solution to plot.")
             self.options()
-        elif opt == 8:
+        elif opt == 7:
             self.assign()
             self.predef_beta = float(input("Set β:\n"))
             self.options()
-        elif opt == 9:
+        elif opt == 8:
             quit()
         else:
             print("\nYour chosen option is not valid, please choose an option between 0-7")
@@ -109,10 +105,10 @@ class CLI:
     def assign(self):
         self.sol = IterForm(self.p.f, self.p.s, self.mean, self.std_dev)
 
-    def _compute(self, n):
+    def _compute(self, n=20):
         self.sol.predef_beta = self.predef_beta
         try:
-            self.sol.iterate(n)
+            self.sol.iterate(20)
         except TypeError as e:
             print("The following TypeError occured:\n%s\n"
                   "Cannot parse the given formula or your formula led to complex numbers. "

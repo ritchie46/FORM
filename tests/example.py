@@ -19,7 +19,7 @@ smbl = smbl.split(sep=" ")
 z = pi * d**2 * f / 4 - s
 
 a = IterForm(z, smbl, average, sig)
-a.iterate(4)
+a.iterate()
 a.output()
 
 a.plot()
