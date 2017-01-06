@@ -71,7 +71,7 @@ class CLI:
             self.options()
         elif opt == 6:
             if self.result:
-                self.sol.plot()
+                self.sol.plot_iterations()
             else:
                 print("There is no solution to plot.")
             self.options()

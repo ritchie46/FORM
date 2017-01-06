@@ -19,5 +19,4 @@ z = b - s + sqrt(x)
 a = IterForm(z, smbl, average, sig)
 a.iterate()
 a.output()
-
-a.plot()
+a.plot_iterations()

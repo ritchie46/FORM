@@ -19,7 +19,12 @@ smbl = smbl.split(sep=" ")
 z = pi * d**2 * f / 4 - s
 
 a = IterForm(z, smbl, average, sig)
-a.iterate()
-a.output()
-
-a.plot()
+a.plot_failure_function_2D(
+    index_x=1,
+    index_y=0,
+    range_x=range(12, 48),
+)
+# a.iterate()
+# a.output()
+#
+# a.plot_iterations()

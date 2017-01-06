@@ -1,4 +1,4 @@
-from sympy import diff, pprint
+from sympy import diff, pprint, solve
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 import math
@@ -6,6 +6,15 @@ import math
 
 class IterForm:
     def __init__(self, z, _symbols, mean, std_dev):
+        """
+        :param z: (code) Failure function in python/sympy code. Example:
+                    pi * d**2 * f / 4 - s
+        :param _symbols: (list) Sympy symbols. Example:
+                    ['x', 'b', 's']
+        :param mean: (list) Mean values variables, corresponding with the symbols.
+        :param std_dev: (list) Standard deviation values variables, corresponding with the symbols.
+                        If the symbol variables is deterministic, the value is 0.
+        """
         # Failure function
         self.z = z
 
@@ -59,6 +68,10 @@ class IterForm:
             self.partial_dev.append(diff(self.z, variable))
 
     def iterate(self, n=20):
+        """
+        Determine the partial derivatives per iteration. The iterations stop when beta is getting constant.
+        :param n: (int) Amount of iterations.
+        """
         self.det_partial_dev()
 
         for i in range(n):
@@ -150,7 +163,7 @@ class IterForm:
         print("\n\tProbability of z >= 0:\n\t\tP(β): %s" % self.chance[i])
         print("\n\tProbability of z <= 0:\n\t\tP(1 - β): %s" % (1 - self.chance[i]))
 
-    def plot(self):
+    def plot_iterations(self):
         x = [0, 1]
         dbeta = [0, self.beta[0]]
 
@@ -161,6 +174,61 @@ class IterForm:
         plt.plot(x, [0] + self.beta)
         plt.plot(x, dbeta)
         plt.show()
+
+    def plot_failure_function_2D(self, index_x, index_y, range_x, offset_scale=1):
+        """
+        Plot is only possible with two stochastic variables.
+        :param index_x: (list) Index of of the stochastic variable in the mean and std. deviation list.
+        :param index_y: (list) Index of of the stochastic variable in the mean and std. deviation list.
+        :param range_x: (range) Range to plot.
+        :param offset_scale: (float) Set the scale of the offset to create distinction with failure and non failure side.
+        """
+
+        smbl_x = self.symbols[index_x]
+        smbl_y = self.symbols[index_y]
+        print("x = ", smbl_x, "\ny = ", smbl_y)
+
+        # Determine the y value that belongs to z = 0 and x = variable.
+        # substitute the mean values and create a substitution dict.
+        mean = list(self.mean)
+        symbols = list(self.symbols)
+        # The value of y should not be included as it needs te be solved.
+        del mean[index_y]
+        del symbols[index_y]
+        sub = dict(zip(symbols, mean))
+
+        # Determine the y values
+        y = []
+        y_fail = []
+        y_no_fail = []
+        for x in range_x:
+            if x == 0:
+                x += 0.01
+            # Update x
+            sub[smbl_x] = x
+            y.append(solve(self.z.subs(sub), smbl_y)[0])
+
+        offset = max(y) * offset_scale
+        z_fail = self.z + offset
+        z_no_fail = self.z - offset
+
+        for x in range_x:
+            if x == 0:
+                x += 0.01
+            # Update x
+            sub[smbl_x] = x
+            y_fail.append(solve(z_fail.subs(sub), smbl_y)[0])
+            y_no_fail.append(solve(z_no_fail.subs(sub), smbl_y)[0])
+
+        plt.xlabel("variable: " + smbl_x)
+        plt.ylabel("variable: " + smbl_y)
+        plt.plot(range_x, y, label="z = 0", color="blue")
+        plt.plot(range_x, y_fail, label="fail_side", color="red")
+        plt.plot(range_x, y_no_fail, label="no_fail_side", color="green")
+        plt.legend()
+        plt.show()
+
+
 
 
 
