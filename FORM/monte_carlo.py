@@ -1,5 +1,5 @@
 import random
-from sympy import symbols, sqrt
+from sympy import symbols, lambdify
 
 
 class MonteCarlo:
@@ -15,30 +15,30 @@ class MonteCarlo:
          """
         # Failure function
         self.z = z
+        self.symbols = _symbols
+        self.mean = mean
+        self.std_dev = std_dev
 
-        # Values for the total z-function after iteration (Taylor linearization). Each index is an iteration level.
-        self.mean_z = []
-        self.std_dev_z = []
+    def compute(self, draw, solution_print=True):
+        """
+        :param draw: (int) Number of draws.
+        :param solution_print: (bool) If True, print result
+        :return: p: (float) chance of z < 0
+        """
+        fail = []
+        z = lambdify(self.symbols, self.z)
 
-    def compute(self, draw):
-        for i in range(draw):
-            print(random.normalvariate(3, 1))
+        for _ in range(draw):
+            args = []
+            for i in range(len(self.mean)):
+                args.append(random.normalvariate(self.mean[i], self.std_dev[i]))
+            sol = z(*args)
+            if sol < 0:
+                fail.append(sol)
+
+        p = len(fail) / draw
+        if solution_print:
+            print("%d/%d" % (len(fail), draw),  p)
+        return p
 
 
-smbl = "Yw d Yg h R p Ys"
-Yw, d, Yg, h, R, p, Ys = symbols(smbl)
-# average values of the stochastic symbols
-average = [10, 10, 17, 30, 5, 240, 12]
-
-# standard deviation of the stochastic symbols
-sig = [0, 0, 5, 3, 0, 10, 0]
-
-smbl = smbl.split(sep=" ")
-
-a = MonteCarlo(
-    z=Yw * d + Yg * (h - d - R) - (p - Ys * R),
-    _symbols=smbl,
-    mean=average,
-    std_dev=sig
-)
-a.compute(200)
