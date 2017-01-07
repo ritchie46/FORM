@@ -42,7 +42,7 @@ Gotcha's:
 	β: mean / standard deviation, Can be used to determine the probability of a Gaussian distribution.
 
 Set your reliability function:
->>> pi * d² * f / 4 - s
+pi * d² * f / 4 - s
 
 Your function:
 
@@ -54,52 +54,55 @@ Your function:
   4
 
 Set the mean value for d:
->>> 30
+30
 
 Set the mean value for f:
->>> 290
+290
 
 Set the mean value for s:
->>> 100e3
+100e3
 
 Set the standard deviation for d:
->>> 3
+3
 
 Set the standard deviation for f:
->>> 35
+35
 
 Set the standard deviation for s:
->>> 7500
+7500
 
 Choose your option:
 [0] Show result summary of latest iteration.
 [1] Show output off all iterations.
-[2] Change the amount of iterations (current = 4).
-[3] Show αi.
-[4] Change mean values.
-[5] Change standard deviation values.
-[6] Change the reliability function.
-[7] Quit.
->>> 0
+[2] Show αi.
+[3] Change mean values.
+[4] Change standard deviation values.
+[5] Change the reliability function.
+[6] Plot convergence.
+[7] Preset reliability index β
+[8] Quit.
+0
 
 Computing solution ...
 
 
 
+
 Results:
 
-	Symbols order of αi:
-	 ['d', 'f', 's']
+	Design point location:
+	 {'s': 104687.089069978, 'f': 246.681165512765, 'd': 23.2452181058089}
 
-	αi: [0.851210508005937, 0.468579395522670, -0.236376862556137]
+	αi:
+	{'s': -0.236340529999135, 'f': 0.468060635918737, 'd': 0.851505957103692}
 
-	β: 2.64425716544164
+	The reliability index β: 2.64425530490390
 
 	Probability of z >= 0:
-		P(β): 0.995906478593
+		P(β): 0.99590645609
 
 	Probability of z <= 0:
-		P(1 - β): 0.00409352140694
+		P(1 - β): 0.00409354390967
 ```
 
 Besides the information of the failure probability is the influences of the variables known. As can be seen in the

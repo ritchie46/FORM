@@ -24,7 +24,7 @@ a.plot_failure_function_2D(
     index_y=0,
     range_x=range(12, 48),
 )
-# a.iterate()
-# a.output()
+a.iterate()
+a.output()
 #
 # a.plot_iterations()
