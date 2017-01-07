@@ -1,5 +1,5 @@
 import random
-from sympy import symbols, lambdify
+from sympy import lambdify
 
 
 class MonteCarlo:

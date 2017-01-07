@@ -135,10 +135,15 @@ class IterForm:
 
     def output(self):
         line = 40
-        print("\n\nPartial derivatives:\n%s" % ("-" * line))
+        print("Partial derivatives:\n%s" % ("-" * line))
         for j in range(len(self.symbols)):
             print("Partial derivative to %s:" % self.symbols[j])
             pprint(self.partial_dev[j])
+
+        print("\n\nInput:\n%s\nMean values:\n" % ("-" * line),
+              dict(zip(self.symbols, self.mean)),
+              "\nStandard deviation values:\n",
+              dict(zip(self.symbols, self.std_dev)))
 
         for i in range(len(self.mean_z)):
             self.output_by_index(i, verbose=True)
@@ -150,15 +155,16 @@ class IterForm:
                   "Total reliability function results:\n"
                   "\tMean z-function:\n" % ((i + 1), "-" * line))
             pprint(self.mean_z[i])
+            print("\n\tMean z-function floating point value:", self.mean_z[i].subs(self.subs_mean[i]).evalf())
 
             print("\n\tStd dev z-function:\n")
             pprint(self.std_dev_z[i])
             print("\n\tstd dev z-function floating point value:", self.std_dev_z[i].subs(self.subs_mean[i]).evalf())
-        print("\nResults:"
+
+        print("\n\nResults:"
               "\n\n\tDesign point location:\n\t", self.subs_mean[i])
-        print("\n\tMean z-function floating point value:", self.mean_z[i].subs(self.subs_mean[i]).evalf())
-        print("\n\tSymbols order of αi:\n\t %s" % self.symbols)
-        print("\n\tαi: %s" % self.alpha_i[i])
+
+        print("\n\tαi:\n\t%s" % dict(zip(self.symbols, self.alpha_i[i])))
         print("\n\tThe reliability index β: %s" % self.beta[i])
         print("\n\tProbability of z >= 0:\n\t\tP(β): %s" % self.chance[i])
         print("\n\tProbability of z <= 0:\n\t\tP(1 - β): %s" % (1 - self.chance[i]))
