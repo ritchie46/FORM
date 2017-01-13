@@ -29,9 +29,11 @@ class MonteCarlo:
         z = lambdify(self.symbols, self.z)
 
         for _ in range(draw):
+
             args = []
             for i in range(len(self.mean)):
                 args.append(random.normalvariate(self.mean[i], self.std_dev[i]))
+
             sol = z(*args)
             if sol < 0:
                 fail.append(sol)
